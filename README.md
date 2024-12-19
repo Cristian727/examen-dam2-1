@@ -1,33 +1,18 @@
-Sprint 1: Preparación
+### Sprint 1: Preparación
 
-1º Instalamos sudo apt install apache2
 
-2º Compruebo que puedo hacer un commit correctamente a mi Repositorio
+1º Compruebo que puedo hacer un commit correctamente a mi Repositorio
 
 ![alt text](PruebaCommit.png)
 
-3º Comprobamos que tenco mi cuenta de Docker iniciada
+2º Comprobamos que tengo mi cuenta de Docker iniciada
 
 ![alt text](ImagenCuentaDocker.png)
 
-### Sprint 1: Preparación
+### Sprint 2: Preparación
 
-1. **Comprobación de commit y push a GitHub**:
-   - Realicé un commit y push a mi repositorio con los siguientes comandos:
-     ```bash
-     git add .
-     git commit -m "Primer commit"
-     git push origin main
-     ```
-   - Verifiqué que los cambios se subieron correctamente a mi repositorio en GitHub.
 
-2. **Inicio de sesión en Docker Hub**:
-   - Inicié sesión en Docker Hub con:
-     ```bash
-     docker login
-     ```
-
-3. **Verificación del estado de los contenedores Docker**:
+1. **Verificación del estado de los contenedores Docker**:
    - Comprobé que no había contenedores en ejecución con el comando:
      ```bash
      docker ps
@@ -37,7 +22,7 @@ Sprint 1: Preparación
      CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
      ```
 
-4. **Creación del servidor Apache con Docker**:
+2. **Creación del servidor Apache con Docker**:
    - Creé una carpeta llamada `apache` y dentro de ella, los archivos `Dockerfile` e `index.html`.
    - El contenido del `Dockerfile` es el siguiente:
      ```dockerfile
@@ -123,3 +108,66 @@ En este sprint, hemos configurado un servidor web Apache que ejecuta PHP. El ser
    // Mostrar la IP del cliente
    echo "<p>IP del cliente: " . $_SERVER['REMOTE_ADDR'] . "</p>";
    ?>
+
+## Sprint 4: PHP
+
+### Objetivo
+
+En este sprint, hemos añadido dos archivos PHP importantes al servidor Apache para interactuar con el usuario:
+
+1. **info.php**: Muestra información detallada sobre la configuración de PHP en el servidor.
+2. **random.php**: Devuelve un JSON con un número aleatorio entre 1 y 100, indica si el número es par o impar y devuelve un elemento aleatorio de un array predefinido.
+
+### Pasos realizados
+
+1. **Creación del archivo `info.php`**:
+   - Este archivo utiliza la función `phpinfo()` para mostrar toda la información relacionada con la configuración de PHP.
+   
+   El contenido del archivo `info.php` es el siguiente:
+   ```php
+   <?php
+   // Muestra toda la información de PHP
+   phpinfo();
+   ?>
+
+## Sprint 5: Composing con Apache + PHP + MySQL
+
+### Objetivo
+
+En este sprint, configuramos un entorno de desarrollo utilizando **Docker** con tres servicios principales: **Apache**, **PHP** y **MySQL**. Utilizamos Docker Compose para gestionar estos servicios y asegurarnos de que todos los contenedores se levanten correctamente y se comuniquen entre sí.
+
+### Pasos realizados
+
+1. **Crear el archivo `docker-compose.yml`**:
+   - Este archivo define los servicios de Apache, PHP y MySQL, y las redes necesarias para que los contenedores se comuniquen entre sí. Aquí está el contenido del archivo `docker-compose.yml`:
+   ```yaml
+   version: '3.8'
+
+   services:
+     apache-php:
+       build: ./apache-php
+       ports:
+         - "8080:80"
+       depends_on:
+         - mysql
+       environment:
+         MYSQL_HOST: mysql
+         MYSQL_USER: root
+         MYSQL_PASSWORD: example
+         MYSQL_DATABASE: my_database
+       networks:
+         - backend
+
+     mysql:
+       image: mysql:5.7
+       environment:
+         MYSQL_ROOT_PASSWORD: example
+         MYSQL_DATABASE: my_database
+       volumes:
+         - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+       networks:
+         - backend
+
+   networks:
+     backend:
+       driver: bridge
