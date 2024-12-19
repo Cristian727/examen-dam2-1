@@ -1,11 +1,21 @@
 ### Sprint 1: Preparación
 
 
-1º Compruebo que puedo hacer un commit correctamente a mi Repositorio
+1. **Comprobación de commit y push a GitHub**:
+   - Realicé un commit y push a mi repositorio con los siguientes comandos:
+     ```bash
+     git add .
+     git commit -m "Primer commit"
+     git push origin main
+     ```
+   - Verifiqué que los cambios se subieron correctamente a mi repositorio en GitHub.
 
-![alt text](PruebaCommit.png)
+2. **Inicio de sesión en Docker Hub**:
+   - Inicié sesión en Docker Hub con:
+     ```bash
+     docker login
+     ```
 
-2º Comprobamos que tengo mi cuenta de Docker iniciada
 
 ![alt text](ImagenCuentaDocker.png)
 
