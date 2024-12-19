@@ -181,3 +181,89 @@ En este sprint, configuramos un entorno de desarrollo utilizando **Docker** con 
    networks:
      backend:
        driver: bridge
+
+Explicación del Dockerfile:
+
+    Imagen base: Usamos la imagen php:7.4-apache, que ya incluye Apache y PHP.
+    Habilitar mod_rewrite: Activamos el módulo de Apache rewrite para permitir la reescritura de URLs (útil para aplicaciones que usan rutas dinámicas).
+    Instalar extensión mysqli: Instalamos la extensión mysqli para habilitar la interacción con bases de datos MySQL.
+    Copiar archivos: Copiamos todos los archivos de la aplicación desde el directorio local al contenedor de Apache.
+    Exponer puerto: Exponemos el puerto 80 para que el servidor Apache sea accesible desde fuera del contenedor.
+
+También, para la base de datos MySQL, creamos un archivo init.sql que contiene los comandos para crear la base de datos y las tablas necesarias. El archivo init.sql tiene el siguiente contenido:
+
+CREATE DATABASE IF NOT EXISTS my_database;
+USE my_database;
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE
+);
+
+
+Explicación del archivo init.sql:
+
+    Crear base de datos: Si no existe, creamos una base de datos llamada my_database.
+    Crear tabla users: Creamos una tabla users con tres campos: id (clave primaria autoincrementable), name (cadena de texto) y email (cadena de texto única).
+
+Finalmente, el archivo index.php se utilizó para mostrar un mensaje de "Hola Mundo" y verificar la conexión a la base de datos MySQL. El contenido de index.php es el siguiente:
+
+<?php
+// Mostrar un mensaje de Hola Mundo
+echo "<h1>Hola Mundo desde PHP!</h1>";
+
+// Mostrar la fecha y hora actual
+echo "<p>Fecha y hora actual: " . date('Y-m-d H:i:s') . "</p>";
+
+// Mostrar la versión de PHP
+echo "<p>Versión de PHP: " . phpversion() . "</p>";
+
+// Mostrar la versión de Apache
+echo "<p>Versión de Apache: " . apache_get_version() . "</p>";
+
+// Mostrar la IP del servidor
+echo "<p>IP del servidor: " . getHostByName(getHostName()) . "</p>";
+
+// Mostrar la IP del cliente
+echo "<p>IP del cliente: " . $_SERVER['REMOTE_ADDR'] . "</p>";
+
+// Conexión a la base de datos MySQL
+$servername = "mysql";
+$username = "root";
+$password = "example";
+$dbname = "my_database";
+
+// Crear conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificar conexión
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+} else {
+    echo "Conexión exitosa a la base de datos.";
+}
+
+// Cerrar la conexión
+$conn->close();
+?>
+
+Explicación del archivo index.php:
+
+    Mostrar "Hola Mundo": Imprime un mensaje de bienvenida en formato HTML.
+    Mostrar fecha y hora actual: Usa la función date() para mostrar la fecha y hora del servidor.
+    Mostrar versiones: Imprime la versión de PHP y Apache usando las funciones phpversion() y apache_get_version().
+    Mostrar IPs: Muestra la IP del servidor y la IP del cliente.
+    Conexión a MySQL: Intenta conectar con la base de datos MySQL usando las credenciales definidas y muestra un mensaje de éxito o error.
+
+Después de configurar estos archivos, ejecutamos los contenedores con el siguiente comando para levantar todos los servicios definidos en docker-compose.yml:
+
+docker compose up --build
+
+
+Este comando construye las imágenes necesarias y levanta los contenedores de Apache, PHP y MySQL. El contenedor de Apache + PHP está disponible en http://localhost:8080, y MySQL está corriendo en su puerto predeterminado 3306.
+
+Finalmente, para detener y eliminar los contenedores, usamos el siguiente comando:
+docker compose down
+
+Con estos pasos, logramos configurar un entorno de desarrollo con Apache, PHP y MySQL usando Docker y Docker Compose, lo que facilita el despliegue y la gestión de aplicaciones web que interactúan con bases de datos.
+
